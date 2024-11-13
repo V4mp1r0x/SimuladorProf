@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado de Espanhol - Oitavo Ano</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 700px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            color: #6a11cb;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 10px;
+            font-size: 14px;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 5px 10px rgba(255, 64, 129, 0.3);
+        }
+        .btn:hover {
+            background-color: #ff1a66;
+            box-shadow: 0px 8px 20px rgba(255, 26, 102, 0.5);
+            transform: translateY(-3px);
+        }
+        .question {
+            font-size: 18px;
+            margin: 15px 0;
+            font-weight: bold;
+            color: #333;
+            display: block;
+        }
+        .options {
+            text-align: left;
+            margin-top: 15px;
+        }
+        .options div {
+            background: #f3f3f3;
+            padding: 10px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        .options div:hover {
+            background: #e0e0e0;
+            transform: translateY(-3px);
+        }
+        .footer {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 20px;
+            text-align: center;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simulado de Espanhol - Oitavo Ano</h1>
+        <p>Este simulado ajuda a revisar temas de interpretação textual, Don Quijote, conjunções e pronomes relativos.</p>
+        
+        <div id="quiz-section">
+            <button class="btn" onclick="generateQuestion()">Gerar Pergunta</button>
+            <button class="btn" onclick="resetQuiz()">Resetar Simulado</button>
+            <button class="btn" onclick="finalizeQuiz()">Finalizar o Simulado</button>
+
+            <div id="question-container">
+                <h2 class="question">Pergunta:</h2>
+                <p id="question-text"></p>
+                <div id="answers" class="options"></div>
+            </div>
+        </div>
+
+        <div id="feedback-section" style="display: none;">
+            <h2>Resultado Final</h2>
+            <p id="result"></p>
+            <p id="correct-answers"></p>
+            <p id="incorrect-answers"></p>
+            <button class="btn" onclick="resetQuiz()">Reiniciar Simulado</button>
+        </div>
+
+        <div class="footer">
+            <p>Criado por Guilherme Paz</p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+    // 15 Perguntas de Interpretación Textual
+    { theme: "Interpretación Textual", text: "¿Cuál es la idea principal del texto?", options: ["La opinión del autor", "Los detalles secundarios", "La idea central que unifica el texto", "La introducción"], correct: 2, explanation: "La idea principal es el punto de enfoque del texto." },
+    { theme: "Interpretación Textual", text: "¿Qué significa inferir en un texto?", options: ["Comprender lo explícito", "Entender lo implícito", "Repetir el contenido", "Resumen literal"], correct: 1, explanation: "Inferir es leer entre líneas para entender el mensaje oculto." },
+    { theme: "Interpretación Textual", text: "¿Cómo se identifica la intención del autor?", options: ["Por las palabras usadas", "Por la extensión del texto", "Por el género literario", "Por la estructura del párrafo"], correct: 0, explanation: "La elección de palabras revela la intención del autor." },
+    { theme: "Interpretación Textual", text: "¿Qué es un sinónimo?", options: ["Palabra de significado contrario", "Palabra con sonido similar", "Palabra con significado similar", "Palabra inventada"], correct: 2, explanation: "Sinónimo significa palabras con significados parecidos." },
+    { theme: "Interpretación Textual", text: "¿Qué es un antónimo?", options: ["Palabra de significado opuesto", "Palabra con significado similar", "Palabra ambigua", "Palabra inventada"], correct: 0, explanation: "Antónimo es una palabra de significado contrario." },
+    { theme: "Interpretación Textual", text: "¿Cómo se llama el mensaje oculto en el texto?", options: ["Explícito", "Implícito", "Subrayado", "Principal"], correct: 1, explanation: "Lo implícito es el mensaje escondido en el texto." },
+    { theme: "Interpretación Textual", text: "¿Qué función cumple el título en un texto?", options: ["Describe detalles", "Resume el contenido", "Añade comentarios", "Introduce ejemplos"], correct: 1, explanation: "El título sintetiza el contenido principal del texto." },
+    { theme: "Interpretación Textual", text: "¿Qué es un párrafo descriptivo?", options: ["Explica procedimientos", "Describe características", "Informa hechos", "Pregunta detalles"], correct: 1, explanation: "Un párrafo descriptivo destaca cualidades o características." },
+    { theme: "Interpretación Textual", text: "¿Qué es una conclusión en un texto?", options: ["El inicio del texto", "Una opinión externa", "La idea final", "Una cita textual"], correct: 2, explanation: "La conclusión es el cierre del tema tratado." },
+    { theme: "Interpretación Textual", text: "¿Qué significa interpretar?", options: ["Copiar", "Leer", "Escribir", "Comprender"], correct: 3, explanation: "Interpretar es comprender el sentido del texto." },
+    { theme: "Interpretación Textual", text: "¿Qué es un resumen?", options: ["Una lista de detalles", "Una conclusión extensa", "Una síntesis de lo más importante", "Una descripción"], correct: 2, explanation: "Un resumen se enfoca en lo esencial del contenido." },
+    { theme: "Interpretación Textual", text: "¿Cuál es la diferencia entre lo literal y lo figurado?", options: ["Lo literal es directo; lo figurado es simbólico", "Ambos son iguales", "Lo figurado es una mentira", "No hay diferencia"], correct: 0, explanation: "Lo literal se entiende al pie de la letra, lo figurado es simbólico." },
+    { theme: "Interpretación Textual", text: "¿Qué es un contexto?", options: ["El título", "La oración inicial", "Las ideas que rodean el texto", "Una opinión"], correct: 2, explanation: "El contexto es el conjunto de ideas que rodean el texto." },
+    { theme: "Interpretación Textual", text: "¿Qué es un texto narrativo?", options: ["Describe datos", "Explica procedimientos", "Cuenta una historia", "Resume hechos"], correct: 2, explanation: "El texto narrativo relata historias o sucesos." },
+    { theme: "Interpretación Textual", text: "¿Qué es un texto expositivo?", options: ["Expone información", "Cuenta una historia", "Pregunta al lector", "Describe un lugar"], correct: 0, explanation: "Un texto expositivo brinda información objetiva." },
+
+    // 15 Perguntas de Don Quijote
+    { theme: "Don Quijote", text: "¿Quién escribió Don Quijote?", options: ["Gabriel García Márquez", "Miguel de Cervantes", "Jorge Luis Borges", "Pablo Neruda"], correct: 1, explanation: "Miguel de Cervantes es el autor de Don Quijote." },
+    { theme: "Don Quijote", text: "¿Quién es el fiel compañero de Don Quijote?", options: ["Sancho Panza", "Rocinante", "Dulcinea", "El Cid"], correct: 0, explanation: "Sancho Panza acompaña a Don Quijote en sus aventuras." },
+    { theme: "Don Quijote", text: "¿Qué es Rocinante?", options: ["Un gigante", "Un caballo", "Un molino", "Una espada"], correct: 1, explanation: "Rocinante es el caballo de Don Quijote." },
+    { theme: "Don Quijote", text: "¿Qué simboliza Don Quijote?", options: ["El realismo", "El idealismo", "La magia", "La política"], correct: 1, explanation: "Don Quijote simboliza el idealismo y los sueños heroicos." },
+    { theme: "Don Quijote", text: "¿Qué quiere Don Quijote lograr en sus aventuras?", options: ["Fama", "Poder", "Justicia", "Riqueza"], correct: 2, explanation: "Don Quijote lucha para defender la justicia y a los necesitados." },
+    { theme: "Don Quijote", text: "¿Cómo se llama la dama de Don Quijote?", options: ["Dulcinea", "Sancha", "Beatriz", "Isabela"], correct: 0, explanation: "Dulcinea del Toboso es la dama idealizada por Don Quijote." },
+    { theme: "Don Quijote", text: "¿Qué confunde Don Quijote con gigantes?", options: ["Árboles", "Montañas", "Molinos de viento", "Rocas"], correct: 2, explanation: "Don Quijote confunde los molinos de viento con gigantes." },
+    { theme: "Don Quijote", text: "¿En qué siglo fue escrito Don Quijote?", options: ["Siglo XVI", "Siglo XVII", "Siglo XVIII", "Siglo XIX"], correct: 1, explanation: "Don Quijote fue escrito a inicios del siglo XVII." },
+    { theme: "Don Quijote", text: "¿Por qué Don Quijote se convierte en caballero?", options: ["Por dinero", "Por amor", "Por aventura", "Para combatir la injusticia"], correct: 3, explanation: "Don Quijote se hace caballero para luchar contra la injusticia." },
+    { theme: "Don Quijote", text: "¿Cuál es el verdadero nombre de Don Quijote?", options: ["Alonso Quijano", "Pedro Quijote", "Diego Cervantes", "Rodrigo de la Vega"], correct: 0, explanation: "Alonso Quijano es el nombre real de Don Quijote." },
+    { theme: "Don Quijote", text: "¿Qué representa Sancho Panza en la historia?", options: ["La nobleza", "El realismo", "El idealismo", "La valentía"], correct: 1, explanation: "Sancho Panza representa el realismo en contraste con Don Quijote." },
+    { theme: "Don Quijote", text: "¿Qué título se da Don Quijote a sí mismo?", options: ["El Caballero de la Mancha", "El Caballero del Sol", "El Caballero de la Justicia", "El Caballero de España"], correct: 0, explanation: "Don Quijote se llama a sí mismo 'El Caballero de la Mancha'." },
+    { theme: "Don Quijote", text: "¿Cómo se llama el lugar de donde es Don Quijote?", options: ["La Mancha", "Madrid", "Barcelona", "Andalucía"], correct: 0, explanation: "Don Quijote es de La Mancha, en España." },
+    { theme: "Don Quijote", text: "¿Qué busca Don Quijote en sus aventuras?", options: ["Tesoros", "Honor", "Amigos", "Nuevos lugares"], correct: 1, explanation: "Don Quijote busca honor y justicia en sus aventuras." },
+    { theme: "Don Quijote", text: "¿Qué tipo de obra es Don Quijote?", options: ["Novela de aventuras", "Novela de caballería", "Comedia", "Poema épico"], correct: 1, explanation: "Don Quijote es una novela de caballería." },
+
+    // 15 Perguntas de Conjunções
+    { theme: "Conjunciones", text: "¿Cuál es una conjunción coordinativa en español?", options: ["O", "Porque", "Sin", "Cuando"], correct: 0, explanation: "La conjunción 'o' se usa para alternativas." },
+    { theme: "Conjunciones", text: "¿Qué función tiene la conjunción 'y' en una oración?", options: ["Dividir ideas", "Introducir causa", "Unir ideas", "Contrastar"], correct: 2, explanation: "La conjunción 'y' une ideas similares." },
+    { theme: "Conjunciones", text: "¿Qué tipo de conjunción es 'aunque'?", options: ["Copulativa", "Causal", "Concesiva", "Temporal"], correct: 2, explanation: "Aunque indica una concesión." },
+    { theme: "Conjunciones", text: "¿Qué conjunción se usa para contrastar ideas?", options: ["Pero", "Y", "O", "Aunque"], correct: 0, explanation: "'Pero' se usa para contraponer ideas." },
+    { theme: "Conjunciones", text: "¿Cuál de estas es una conjunción subordinada?", options: ["Pero", "Y", "Porque", "O"], correct: 2, explanation: "Porque introduce una razón o causa." },
+    { theme: "Conjunciones", text: "¿Qué conjunción usamos para expresar una causa?", options: ["Porque", "O", "Cuando", "Si"], correct: 0, explanation: "'Porque' indica la causa de algo." },
+    { theme: "Conjunciones", text: "¿Cuál es una conjunción temporal?", options: ["Cuando", "Y", "Porque", "O"], correct: 0, explanation: "'Cuando' introduce una relación temporal." },
+    { theme: "Conjunciones", text: "¿Qué conjunción expresa una condición?", options: ["Si", "Y", "Porque", "Aunque"], correct: 0, explanation: "'Si' indica una condición para algo." },
+    { theme: "Conjunciones", text: "¿Qué función tiene la conjunción 'sino'?", options: ["Añadir", "Restar", "Contrastar", "Explicar"], correct: 2, explanation: "'Sino' contrasta ideas o elementos." },
+    { theme: "Conjunciones", text: "¿Qué conjunción usamos para añadir información?", options: ["Y", "Aunque", "Si", "Sino"], correct: 0, explanation: "'Y' es copulativa, añadiendo ideas." },
+    { theme: "Conjunciones", text: "¿Qué conjunción es adversativa?", options: ["Pero", "Y", "O", "Cuando"], correct: 0, explanation: "'Pero' indica contraste o contradicción." },
+    { theme: "Conjunciones", text: "¿Qué conjunción es disyuntiva?", options: ["O", "Y", "Pero", "Porque"], correct: 0, explanation: "'O' es una conjunción disyuntiva que expresa elección." },
+    { theme: "Conjunciones", text: "¿Qué conjunción se usa para unir ideas de igual importancia?", options: ["Y", "Aunque", "Si", "Sino"], correct: 0, explanation: "'Y' une ideas de la misma categoría o valor." },
+    { theme: "Conjunciones", text: "¿Qué tipo de conjunción es 'entonces'?", options: ["Copulativa", "Causal", "Consecutiva", "Disyuntiva"], correct: 2, explanation: "'Entonces' es una conjunción consecutiva." },
+    { theme: "Conjunciones", text: "¿Qué conjunción expresa causa?", options: ["Porque", "Y", "O", "Sino"], correct: 0, explanation: "'Porque' indica una relación de causa y efecto." },
+
+    // 15 Perguntas de Pronomes Relativos
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre relativo usamos para personas?", options: ["Cual", "Donde", "Quien", "Cuando"], correct: 2, explanation: "'Quien' se usa para referirse a personas." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre relativo se usa para lugares?", options: ["Que", "Quien", "Donde", "Cuando"], correct: 2, explanation: "'Donde' se usa para hablar de lugares." },
+    { theme: "Pronombres Relativos", text: "¿Cuál es el pronombre relativo que introduce una explicación?", options: ["Porque", "Que", "Cuyo", "Quien"], correct: 1, explanation: "'Que' es un pronombre relativo explicativo." },
+    { theme: "Pronombres Relativos", text: "¿Cuál es el pronombre relativo para expresar posesión?", options: ["Que", "Cuyo", "Donde", "Quien"], correct: 1, explanation: "'Cuyo' indica posesión." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre se usa para referirse a cosas?", options: ["Quien", "Donde", "Que", "Cuyo"], correct: 2, explanation: "'Que' se usa comúnmente para cosas." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre usamos para introducir una explicación adicional?", options: ["Cuyo", "Quien", "Que", "Donde"], correct: 2, explanation: "'Que' introduce información adicional sobre el antecedente." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre se usa para indicar propiedad?", options: ["Quien", "Cuyo", "Donde", "Que"], correct: 1, explanation: "'Cuyo' se usa para expresar posesión o propiedad." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre usamos para especificar personas?", options: ["Que", "Quien", "Cuyo", "Donde"], correct: 1, explanation: "'Quien' se refiere específicamente a personas." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre usamos para tiempos?", options: ["Cuando", "Quien", "Donde", "Cuyo"], correct: 0, explanation: "'Cuando' se refiere a momentos o tiempos." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre se usa para relacionar cláusulas?", options: ["Que", "Cuyo", "Cuando", "Donde"], correct: 0, explanation: "'Que' es el pronombre relativo más común para unir ideas." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre relativo usamos para referirnos a lugares específicos?", options: ["Que", "Donde", "Cuyo", "Cuando"], correct: 1, explanation: "'Donde' especifica un lugar." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre utilizamos en preguntas relativas?", options: ["Quien", "Que", "Cual", "Donde"], correct: 2, explanation: "'Cual' puede utilizarse en preguntas relativas específicas." },
+    { theme: "Pronombres Relativos", text: "¿Qué pronombre es el más común para sujetos?", options: ["Que", "Donde", "Cuando", "Cuyo"], correct: 0, explanation: "'Que' es el pronombre relativo estándar para sujetos." },
+    { theme: "Pronombres Relativos", text: "¿Cuál es el pronombre para una relación temporal?", options: ["Quien", "Donde", "Cuando", "Cuyo"], correct: 2, explanation: "'Cuando' se refiere a un tiempo en particular." },
+    { theme: "Pronombres Relativos", text: "¿Cuál es el pronombre que denota ubicación?", options: ["Que", "Cuyo", "Cuando", "Donde"], correct: 3, explanation: "'Donde' denota un lugar o ubicación." },
+];
+
+          
+
+        let currentQuestionIndex = null;
+        let correctAnswers = 0;
+        let incorrectAnswers = [];
+
+        function generateQuestion() {
+            document.getElementById("feedback-section").style.display = "none";
+            if (questions.length === 0) {
+                alert("Não há mais perguntas.");
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            currentQuestionIndex = randomIndex;
+            const question = questions[randomIndex];
+            document.getElementById("question-text").innerText = question.text;
+            document.getElementById("answers").innerHTML = "";
+            question.options.forEach((option, index) => {
+                const div = document.createElement("div");
+                div.innerText = `${index + 1}. ${option}`;
+                div.onclick = () => checkAnswer(index);
+                document.getElementById("answers").appendChild(div);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const question = questions[currentQuestionIndex];
+            if (selected === question.correct) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers.push({
+                    question: question.text,
+                    selected: question.options[selected],
+                    correct: question.options[question.correct],
+                    explanation: question.explanation
+                });
+            }
+            questions.splice(currentQuestionIndex, 1);
+            generateQuestion();
+        }
+
+        function finalizeQuiz() {
+            document.getElementById("quiz-section").style.display = "none";
+            document.getElementById("feedback-section").style.display = "block";
+            document.getElementById("result").innerText = `Questões corretas: ${correctAnswers}`;
+            
+            let incorrectText = "<strong>Questões incorretas:</strong><br>";
+            incorrectAnswers.forEach((item, i) => {
+                incorrectText += `<strong>${i + 1}. ${item.question}</strong><br>Sua resposta: ${item.selected}<br>Correta: ${item.correct}<br>Explicação: ${item.explanation}<br><br>`;
+            });
+            document.getElementById("incorrect-answers").innerHTML = incorrectText;
+        }
+
+        function resetQuiz() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
